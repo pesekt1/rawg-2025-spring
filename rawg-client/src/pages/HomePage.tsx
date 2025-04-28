@@ -1,15 +1,14 @@
-import { Box, Grid, GridItem, HStack, Show } from "@chakra-ui/react";
-import NavBar from "./components/NavBar";
-import GameGrid from "./components/GameGrid";
-import useGenres from "./hooks/useGenres";
-import PlatformSelector from "./components/PlatformSelector";
-import useStores from "./hooks/useStores";
-import CustomList from "./components/CustomList";
-import SortSelector from "./components/SortSelector";
-import GameHeading from "./components/GameHeading";
-import useGameQueryStore from "./state";
+import { Grid, Show, GridItem, Box, HStack } from "@chakra-ui/react";
+import CustomList from "../components/CustomList";
+import GameGrid from "../components/GameGrid";
+import GameHeading from "../components/GameHeading";
+import PlatformSelector from "../components/PlatformSelector";
+import SortSelector from "../components/SortSelector";
+import useGenres from "../hooks/useGenres";
+import useStores from "../hooks/useStores";
+import useGameQueryStore from "../state";
 
-function App() {
+const HomePage = () => {
   const { genreId, storeId } = useGameQueryStore((s) => s.gameQuery);
   const setGenreId = useGameQueryStore((s) => s.setGenreId);
   const setStoreId = useGameQueryStore((s) => s.setStoreId);
@@ -18,14 +17,11 @@ function App() {
     <Grid
       paddingX="4"
       templateAreas={{
-        base: `"header" "main"`,
-        lg: `"header header" "aside main"`,
+        base: "main",
+        lg: `"aside main"`,
       }}
       templateColumns={{ base: "1fr", lg: "200px 1fr" }}
     >
-      <GridItem area={"header"}>
-        <NavBar />
-      </GridItem>
       <Show above="lg">
         <GridItem area={"aside"}>
           <CustomList
@@ -54,6 +50,6 @@ function App() {
       </GridItem>
     </Grid>
   );
-}
+};
 
-export default App;
+export default HomePage;
