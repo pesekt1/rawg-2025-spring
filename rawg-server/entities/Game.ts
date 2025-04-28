@@ -17,6 +17,9 @@ export class Game {
   @Column()
   name: string;
 
+  @Column({ type: "text", nullable: true })
+  description_raw?: string;
+
   @Column({ nullable: true })
   metacritic?: number;
 
