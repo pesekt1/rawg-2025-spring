@@ -1,4 +1,4 @@
-import { Heading, Spinner, Text } from "@chakra-ui/react";
+import { Heading, Spinner } from "@chakra-ui/react";
 import useGame from "../domain/game/useGame";
 import { useParams } from "react-router-dom";
 import ExpandableText from "../components/ExpandableText";
