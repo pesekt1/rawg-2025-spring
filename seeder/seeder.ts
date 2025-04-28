@@ -4,16 +4,32 @@ import { Game } from "./entities/Game";
 import { Genre } from "./entities/Genre";
 import { ParentPlatform } from "./entities/ParentPlatform";
 import { Store } from "./entities/Store";
+import axios from "axios";
 
 //We need this because the original data has a different structure
 interface GameOriginal {
   id: number;
+  description_raw?: string;
   name: string;
   background_image?: string;
   metacritic?: number;
   parent_platforms: { platform: ParentPlatform }[];
   genres: Genre[];
   stores: { store: Store }[];
+}
+
+async function getDescription(id: number) {
+  const apiKey = process.env.RAWG_API_KEY;
+  try {
+    const response = await axios.get(
+      `https://api.rawg.io/api/games/${id}?key=${apiKey}`
+    );
+    const description_raw = response.data.description_raw || "";
+    return description_raw;
+  } catch (error) {
+    console.error(`Error fetching description for game ID ${id}:`, error);
+    return null; // or handle the error as needed
+  }
 }
 
 async function insertData() {
@@ -84,6 +100,7 @@ async function insertData() {
       })
     );
 
+    game.description_raw = await getDescription(game.id);
     //save the game - this will also save the relationships in the join tables
     await gameRepo.save(game);
     console.log(`Game ${game.name} created`);
