@@ -8,6 +8,7 @@ import {
 import { Genre } from "./Genre";
 import { ParentPlatform } from "./ParentPlatform";
 import { Store } from "./Store";
+import { Publisher } from "./Publisher";
 
 @Entity("games")
 export class Game {
@@ -41,6 +42,10 @@ export class Game {
   @ManyToMany(() => Genre, (genre) => genre.games)
   @JoinTable()
   genres: Genre[];
+
+  @ManyToMany(() => Publisher, (publisher) => publisher.games)
+  @JoinTable()
+  publishers: Publisher[];
 
   @ManyToMany(() => ParentPlatform, (platform) => platform.games)
   @JoinTable()

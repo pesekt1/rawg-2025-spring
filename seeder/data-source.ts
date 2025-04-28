@@ -5,6 +5,7 @@ import { Game } from "./entities/Game";
 import { Genre } from "./entities/Genre";
 import { Store } from "./entities/Store";
 import { ParentPlatform } from "./entities/ParentPlatform";
+import { Publisher } from "./entities/Publisher";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
   url: connectionString,
   synchronize: true, // Set to false in production and use migrations instead
   logging: false,
-  entities: [Game, Genre, Store, ParentPlatform],
+  entities: [Game, Genre, Store, ParentPlatform, Publisher],
   migrations: [],
   subscribers: [],
 });

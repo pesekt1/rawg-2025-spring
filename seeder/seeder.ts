@@ -5,6 +5,7 @@ import { Genre } from "./entities/Genre";
 import { ParentPlatform } from "./entities/ParentPlatform";
 import { Store } from "./entities/Store";
 import axios from "axios";
+import { Publisher } from "./entities/Publisher";
 
 //We need this because the original data has a different structure
 interface GameOriginal {
@@ -16,16 +17,21 @@ interface GameOriginal {
   parent_platforms: { platform: ParentPlatform }[];
   genres: Genre[];
   stores: { store: Store }[];
+  publishers: Publisher[];
 }
 
-async function getDescription(id: number) {
+async function getAdditionalGameData(id: number) {
   const apiKey = process.env.RAWG_API_KEY;
   try {
     const response = await axios.get(
       `https://api.rawg.io/api/games/${id}?key=${apiKey}`
     );
-    const description_raw = response.data.description_raw || "";
-    return description_raw;
+    const description_raw: string = response.data.description_raw || "";
+    const publishers: Publisher[] = response.data.publishers || [];
+    return {
+      description_raw,
+      publishers,
+    };
   } catch (error) {
     console.error(`Error fetching description for game ID ${id}:`, error);
     return null; // or handle the error as needed
@@ -51,6 +57,7 @@ async function insertData() {
   const genreRepo = AppDataSource.getRepository(Genre);
   const platformRepo = AppDataSource.getRepository(ParentPlatform);
   const storeRepo = AppDataSource.getRepository(Store);
+  const publisherRepo = AppDataSource.getRepository(Publisher);
 
   //before inserting data, delete all existing data
   await gameRepo.delete({});
@@ -61,9 +68,30 @@ async function insertData() {
   console.log("Platforms deleted");
   await storeRepo.delete({});
   console.log("Stores deleted");
+  await publisherRepo.delete({});
+  console.log("Publishers deleted");
 
   //loop through the games and insert data in all tables
   for (const game of gamesData) {
+    //get additional Data
+    const { description_raw, publishers } =
+      (await getAdditionalGameData(game.id)) || {};
+
+    game.description_raw = description_raw;
+    game.publishers = publishers || [];
+
+    //check each publisher for a game and save it if it doesn't exist
+    await Promise.all(
+      game.publishers.map(async (p) => {
+        let publisher = await publisherRepo.findOne({ where: { id: p.id } });
+        if (!publisher) {
+          publisher = await publisherRepo.save(p);
+          console.log(`Publisher ${publisher.name} created`);
+        }
+        return publisher;
+      })
+    );
+
     //check each genre for a game and save it if it doesn't exist
     await Promise.all(
       game.genres.map(async (g) => {
@@ -100,7 +128,6 @@ async function insertData() {
       })
     );
 
-    game.description_raw = await getDescription(game.id);
     //save the game - this will also save the relationships in the join tables
     await gameRepo.save(game);
     console.log(`Game ${game.name} created`);
