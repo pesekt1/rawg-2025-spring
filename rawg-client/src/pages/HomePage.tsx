@@ -15,7 +15,6 @@ const HomePage = () => {
 
   return (
     <Grid
-      paddingX="4"
       templateAreas={{
         base: "main",
         lg: `"aside main"`,
