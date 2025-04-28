@@ -3,13 +3,7 @@ import ms from "ms";
 import ApiClient from "../../services/api-client";
 import { Response } from "../../services/api-client";
 import genres from "./genres";
-
-export interface Genre {
-  id: number;
-  name: string;
-  slug: string;
-  image_background: string;
-}
+import { Genre } from "./Genre";
 
 const apiClient = new ApiClient<Genre>("/genres");
 

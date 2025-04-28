@@ -2,13 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import ApiClient, { Response } from "../../services/api-client";
 import stores from "./stores";
 import ms from "ms";
-
-export interface Store {
-  id: number;
-  name: string;
-  slug: string;
-  image_background: string;
-}
+import { Store } from "./Store";
 
 const apiClient = new ApiClient<Store>("/stores");
 
