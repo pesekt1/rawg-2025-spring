@@ -8,7 +8,7 @@ import { RouterProvider } from "react-router-dom";
 import "./main.css";
 
 import theme from "./theme";
-import router from "./pages/routes";
+import router from "./routes";
 
 const queryClient = new QueryClient({
   defaultOptions: {
